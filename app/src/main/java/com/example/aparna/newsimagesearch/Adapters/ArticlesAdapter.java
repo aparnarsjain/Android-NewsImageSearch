@@ -89,13 +89,18 @@ public class ArticlesAdapter extends
         viewHolder.ivArticleImage.setImageResource(0);
         //populate the image in the background
         String thumbnail = article.getThumbnail();
-
         if(!TextUtils.isEmpty(thumbnail)) {
             Picasso.with(mContext).load(thumbnail).into(viewHolder.ivArticleImage);
+        }else {
+//            viewHolder.ivArticleImage.setVisibility(View.GONE);
         }
 
     }
-
+    public void clearAdapter()
+    {
+        mArticles.clear();
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return mArticles.size();

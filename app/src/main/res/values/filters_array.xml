@@ -6,7 +6,7 @@
     </string-array>
     <string-array name="news_desk_values">
         <item>Arts</item>
-        <item>Fashion and Style</item>
+        <item>Fashion &amp; Style</item>
         <item>Sports</item>
     </string-array>
 </resources>

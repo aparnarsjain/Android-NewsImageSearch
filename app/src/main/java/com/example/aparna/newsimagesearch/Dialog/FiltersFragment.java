@@ -1,17 +1,22 @@
 package com.example.aparna.newsimagesearch.Dialog;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.aparna.newsimagesearch.R;
+import com.example.aparna.newsimagesearch.acivities.SearchActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,7 +29,7 @@ import butterknife.ButterKnife;
  * Use the {@link FiltersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FiltersFragment extends DialogFragment {
+public class FiltersFragment extends DialogFragment implements OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,8 +39,12 @@ public class FiltersFragment extends DialogFragment {
     private String mParam1;
     private String mParam2;
 
-    @Bind(R.id.txtDate) EditText etDate;
-    @Bind(R.id.spnSortOrder) Spinner sortOrder;
+    @Bind(R.id.txtBeginDate) EditText etBeginDate;
+    @Bind(R.id.txtEndDate) EditText etEndDate;
+    @Bind(R.id.spnSortOrder) Spinner spnSortOrder;
+    @Bind(R.id.spnDeskValues) Spinner spnDeskValues;
+    @Bind(R.id.btnSave) Button btnSave;
+    @Bind(R.id.btnCancel) Button btnCancel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,6 +81,37 @@ public class FiltersFragment extends DialogFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filters, container, false);
         ButterKnife.bind(this, view);
+
+        btnSave.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
+
+        SharedPreferences preferences = getContext().getSharedPreferences("Filters", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = preferences.edit();
+
+        etBeginDate.setText(preferences.getString("beginDate", ""));
+        etEndDate.setText(preferences.getString("endDate", ""));
+        spnSortOrder.setSelection(preferences.getInt("order", 0));
+        spnDeskValues.setSelection(preferences.getInt("category", 0));
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.putString("beginDate", etBeginDate.getText().toString());
+                editor.putString("endDate", etEndDate.getText().toString());
+                editor.putInt("order", spnSortOrder.getSelectedItemPosition());
+                editor.putInt("category", spnDeskValues.getSelectedItemPosition());
+                editor.commit();
+                dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
         return view;
     }
 
@@ -99,6 +139,11 @@ public class FiltersFragment extends DialogFragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -112,6 +157,13 @@ public class FiltersFragment extends DialogFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        SearchActivity searchActivity = (SearchActivity) getActivity();
+        //TODO: change the null to the real query
+        searchActivity.fetchMoreArticlesFromSharedQuery(0, null);
     }
 
     @Override public void onDestroyView() {

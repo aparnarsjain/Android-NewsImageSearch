@@ -12,7 +12,7 @@
     tools:context=".acivities.SearchActivity"
     tools:showIn="@layout/activity_search">
 
-    <EditText
+    <!--EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/etQuery"
@@ -28,14 +28,13 @@
         android:id="@+id/btnSearch"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onArticleSearch"/>
+        android:onClick="onArticleSearch"/-->
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
         app:layoutManager=""
         android:layout_height="wrap_content"
         android:id="@+id/rvResults"
-        android:layout_below="@+id/etQuery"
         android:layout_alignParentStart="true"
         android:numColumns="4" />
 </RelativeLayout>
