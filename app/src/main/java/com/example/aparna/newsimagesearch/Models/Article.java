@@ -1,4 +1,4 @@
-package com.example.aparna.newsimagesearch;
+package com.example.aparna.newsimagesearch.Models;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +46,6 @@ public class Article implements Serializable{
     }
     public static ArrayList<Article> fromJSONArray(JSONArray array) {
        ArrayList<Article> results = new ArrayList<>();
-
         for (int x = 0; x < array.length(); x++) {
             try {
                 results.add(new Article(array.getJSONObject(x)));
@@ -56,32 +55,4 @@ public class Article implements Serializable{
         }
         return  results;
     }
-
-//    public static ArrayList<Article> createArticlesList(String query, int i, int page) {
-//
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
-//
-//        RequestParams params = new RequestParams();
-//        params.put("api-key", "f306189c1f5f78fe86775fd533f26965:13:74339278");
-//        params.put("page", page);
-//        params.put("q", query);
-//
-//         ArrayList<Article> moreArticles = new ArrayList<>();
-//        client.get(url, params, new JsonHttpResponseHandler(){
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                Log.d("DEBUG", response.toString());
-//                JSONArray articleJsonResults = null;
-//
-//                try {
-//                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-//                    moreArticles = fromJSONArray(articleJsonResults);
-//                }catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        return null;
-//    }
 }

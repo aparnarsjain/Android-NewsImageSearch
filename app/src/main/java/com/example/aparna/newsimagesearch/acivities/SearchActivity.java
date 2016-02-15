@@ -30,9 +30,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.aparna.newsimagesearch.Adapters.ArticlesAdapter;
-import com.example.aparna.newsimagesearch.Article;
 import com.example.aparna.newsimagesearch.Dialog.FiltersFragment;
 import com.example.aparna.newsimagesearch.EndlessRecyclerViewScrollListener;
+import com.example.aparna.newsimagesearch.Models.Article;
 import com.example.aparna.newsimagesearch.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -72,14 +72,11 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
-//        setContentView(R.layout.fragment_filters);
-//        showFiltersDialog();
-
         articles = new ArrayList<>();
         adapter = new ArticlesAdapter(this, articles);
         rvResults.setAdapter(adapter);
 
-        final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL );
+        final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
         rvResults.setLayoutManager(gridLayoutManager);
 
         rvResults.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
@@ -88,7 +85,7 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
                 fetchMoreArticlesFromSharedQuery(page, query);
             }
         });
-
+        fetchMoreArticlesFromSharedQuery(0, "news");
         adapter.setOnItemClickListener(new ArticlesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {

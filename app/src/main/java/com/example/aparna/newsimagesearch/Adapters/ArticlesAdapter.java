@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.aparna.newsimagesearch.Article;
+import com.bumptech.glide.Glide;
+import com.example.aparna.newsimagesearch.Models.Article;
 import com.example.aparna.newsimagesearch.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,9 +90,11 @@ public class ArticlesAdapter extends
         //populate the image in the background
         String thumbnail = article.getThumbnail();
         if(!TextUtils.isEmpty(thumbnail)) {
-            Picasso.with(mContext).load(thumbnail).into(viewHolder.ivArticleImage);
+//            Picasso.with(mContext).load(thumbnail).fit().into(viewHolder.ivArticleImage);
+            Glide.with(mContext).load(thumbnail).centerCrop().into(viewHolder.ivArticleImage);
+
         }else {
-//            viewHolder.ivArticleImage.setVisibility(View.GONE);
+            viewHolder.ivArticleImage.setVisibility(View.GONE);
         }
 
     }

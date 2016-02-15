@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.aparna.newsimagesearch.Article;
+import com.example.aparna.newsimagesearch.Models.Article;
 import com.example.aparna.newsimagesearch.R;
 
 import butterknife.Bind;
