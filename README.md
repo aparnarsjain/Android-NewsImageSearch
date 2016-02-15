@@ -23,10 +23,10 @@ Time spent: 20 hours
     - [x]: Advanced: Replace Filter Settings Activity with a lightweight modal overlay. (2 points)
     - [x]: Advanced: Improve the user interface and experiment with image assets and/or styling and coloring (1 to 3 points depending on the difficulty of UI improvements)
     - [x]: Bonus: Use the RecyclerView with the StaggeredGridLayoutManager to display improve the grid of image results (see Picasso guide too). (2 points)
-    - []: Bonus: For different news articles that only have text or only have images, use Heterogenous Layouts with RecyclerView. (2 points)
+    - : Bonus: For different news articles that only have text or only have images, use Heterogenous Layouts with RecyclerView. (2 points)
     - [x]: Bonus: Apply the popular ButterKnife annotation library to reduce view boilerplate. (1 point)
-    - []: Bonus: Use Parcelable instead of Serializable using the popular Parceler library. (1 point)
-    - [x]: Bonus: Leverage the popular GSON library to streamline the parsing of JSON data. (1 point)
+    - : Bonus: Use Parcelable instead of Serializable using the popular Parceler library. (1 point)
+    - : Bonus: Leverage the popular GSON library to streamline the parsing of JSON data. (1 point)
     - [x]: Bonus: Replace Picasso with Glide for more efficient image rendering. (1 point)
 
   
