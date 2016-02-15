@@ -34,8 +34,7 @@ Time spent: 20 hours
 
 ## Video Walkthrough 
 
-!(https://github.com/aparnarsjain/Android-NewsImageSearch/blob/master/newsimagesearch.gif)
-
+![General Functionality](https://github.com/aparnarsjain/Android-NewsImageSearch/blob/master/newsimagesearch.gif)
 
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
