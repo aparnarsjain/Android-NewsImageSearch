@@ -71,14 +71,14 @@
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="20dp"
             android:text="SAVE"
 
             android:onClick="onFiltersSelectedOk"/>
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="20dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="CANCEL"/>
