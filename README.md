@@ -34,6 +34,7 @@ Time spent: 20 hours
 
 ## Video Walkthrough 
 
+!(https://github.com/aparnarsjain/Android-NewsImageSearch/blob/master/newsimagesearch.gif)
 
 
 
