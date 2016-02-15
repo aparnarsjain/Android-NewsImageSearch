@@ -29,7 +29,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:onClick="onArticleSearch"/-->
-
     <android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
         app:layoutManager=""
@@ -37,4 +36,23 @@
         android:id="@+id/rvResults"
         android:layout_alignParentStart="true"
         android:numColumns="4" />
+    <RelativeLayout android:layout_width="wrap_content"
+        android:id="@+id/divNetworkError"
+        android:layout_height="50dp"
+        android:background="#FB8C00"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/network_error"
+            android:textColor="@android:color/black"
+            android:id="@+id/tvANetworkError"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"/>
+        </RelativeLayout>
 </RelativeLayout>

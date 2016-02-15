@@ -4,6 +4,7 @@
     <string name="hint">Enter Search Term Here</string>
     <string name="search">Search</string>
     <string name="title_activity_article">ArticleActivity</string>
+    <string name="network_error">No network found, please connect!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

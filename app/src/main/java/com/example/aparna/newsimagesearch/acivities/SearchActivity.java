@@ -4,19 +4,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.aparna.newsimagesearch.Adapters.ArticlesAdapter;
 import com.example.aparna.newsimagesearch.Article;
@@ -31,6 +42,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -39,14 +53,17 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements FiltersFragment.OnFragmentInteractionListener{
 //    @Bind(R.id.etQuery) EditText edtQuery;
-    @Bind(R.id.rvResults)
-    RecyclerView rvResults;
+    @Bind(R.id.rvResults) RecyclerView rvResults;
+    @Bind(R.id.divNetworkError) RelativeLayout divNetworkError;
+    @Bind(R.id.tvANetworkError) TextView tvErrorText;
 //    @Bind(R.id.btnSearch) Button btnSearch;
 
     ArrayList<Article> articles;
     ArticlesAdapter adapter;
     String query;
     final static String apiKey = "f306189c1f5f78fe86775fd533f26965:13:74339278";
+    private ShareActionProvider miShareAction;
+    private Intent shareIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +74,6 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
 
 //        setContentView(R.layout.fragment_filters);
 //        showFiltersDialog();
-
 
         articles = new ArrayList<>();
         adapter = new ArticlesAdapter(this, articles);
@@ -73,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
             }
         });
 
-        adapter.setOnItemClickListener(new ArticlesAdapter.OnItemClickListener(){
+        adapter.setOnItemClickListener(new ArticlesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 //create an intent to display the article
@@ -86,6 +102,34 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
             }
         });
     }
+
+    // Returns the URI path to the Bitmap displayed in specified ImageView
+    public Uri getLocalBitmapUri(ImageView imageView) {
+        // Extract Bitmap from ImageView drawable
+        Drawable drawable = imageView.getDrawable();
+        Bitmap bmp = null;
+        if (drawable instanceof BitmapDrawable){
+            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        } else {
+            return null;
+        }
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        try {
+            // Use methods on Context to access package-specific directories on external storage.
+            // This way, you don't need to request external read/write permission.
+            // See https://youtu.be/5xVh-7ywKpE?t=25m25s
+            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+            bmpUri = Uri.fromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bmpUri;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -97,12 +141,11 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
+                fetchMoreArticlesFromSharedQuery(0, query);
 
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
-                fetchMoreArticlesFromSharedQuery(0, query);
-
                 return true;
             }
 
@@ -113,6 +156,26 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
         });
 
         return super.onCreateOptionsMenu(menu);
+    }
+    public boolean isNetworkOnline() {
+        boolean status=false;
+        try{
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            Network[] networks = cm.getAllNetworks();
+            NetworkInfo netInfo = cm.getNetworkInfo(networks[0]);
+            if (netInfo != null && netInfo.getState()==NetworkInfo.State.CONNECTED) {
+                status= true;
+            }else {
+                netInfo = cm.getNetworkInfo(networks[1]);
+                if(netInfo!=null && netInfo.getState()==NetworkInfo.State.CONNECTED)
+                    status= true;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return status;
+
     }
     public void onArticleSearch(View view) {
 //        query = edtQuery.getText().toString();
@@ -139,7 +202,9 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
     }
     public void fetchMoreArticlesFromSharedQuery(int page, String query) {
 //        query = edtQuery.getText().toString();
-        this.query = query;
+        if(query != null) {
+            this.query = query;
+        }
         SharedPreferences preferences = this.getSharedPreferences("filters", Context.MODE_PRIVATE);
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
 
@@ -176,28 +241,40 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
 
     }
     private void getClientData(String url, RequestParams params) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get(url, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-                JSONArray articleJsonResults = null;
+        if(isNetworkOnline()) {
+            divNetworkError.setVisibility(View.GONE);
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.get(url, params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d("DEBUG", response.toString());
+                    JSONArray articleJsonResults = null;
 
-                try {
-                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJSONArray(articleJsonResults));
-                    int curSize = adapter.getItemCount();
-                    adapter.notifyItemRangeInserted(curSize, articles.size() - 1);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                        adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                        int curSize = adapter.getItemCount();
+                        adapter.notifyItemRangeInserted(curSize, articles.size() - 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            setAlertToNetworkConnectionError();
+        }
+
     }
     private void showFiltersDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FiltersFragment filtersFragment = FiltersFragment.newInstance();
         filtersFragment.show(fm, "fragment_filters");
+    }
+    //Shows alert if not connected to internet
+    private void setAlertToNetworkConnectionError() {
+//        tvAlertText.setText("Network Connection Error");
+        tvErrorText.setVisibility(View.VISIBLE);
+        divNetworkError.setVisibility(View.VISIBLE);
     }
 
     public void onClickSettings(MenuItem item) {

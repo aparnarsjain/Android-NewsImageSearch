@@ -1,5 +1,6 @@
 package com.example.aparna.newsimagesearch.Dialog;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -12,11 +13,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.aparna.newsimagesearch.R;
 import com.example.aparna.newsimagesearch.acivities.SearchActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -79,7 +85,7 @@ public class FiltersFragment extends DialogFragment implements OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_filters, container, false);
+        final View view = inflater.inflate(R.layout.fragment_filters, container, false);
         ButterKnife.bind(this, view);
 
         btnSave.setOnClickListener(this);
@@ -88,8 +94,9 @@ public class FiltersFragment extends DialogFragment implements OnClickListener{
         SharedPreferences preferences = getContext().getSharedPreferences("Filters", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
 
-        etBeginDate.setText(preferences.getString("beginDate", ""));
-        etEndDate.setText(preferences.getString("endDate", ""));
+        setupDateFragments(etBeginDate, view, "beginDate", preferences);
+        setupDateFragments(etEndDate, view, "endDate", preferences);
+
         spnSortOrder.setSelection(preferences.getInt("order", 0));
         spnDeskValues.setSelection(preferences.getInt("category", 0));
 
@@ -113,6 +120,30 @@ public class FiltersFragment extends DialogFragment implements OnClickListener{
         });
 
         return view;
+    }
+    public void setupDateFragments(final EditText etDate, final View view, String preferencesKey, SharedPreferences preferences) {
+        etDate.setText(preferences.getString(preferencesKey, ""));
+        final Calendar myCalendar = Calendar.getInstance();
+        etDate.setOnClickListener(new View.OnClickListener() {
+            DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                      int dayOfMonth) {
+                    myCalendar.set(Calendar.YEAR, year);
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
+                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+                    etDate.setText(sdf.format(myCalendar.getTime()));
+                }
+            };
+
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(view.getContext(), date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
