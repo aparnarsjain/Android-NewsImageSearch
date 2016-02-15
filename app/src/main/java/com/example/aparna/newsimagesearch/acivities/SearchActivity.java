@@ -85,7 +85,6 @@ public class SearchActivity extends AppCompatActivity implements FiltersFragment
                 fetchMoreArticlesFromSharedQuery(page, query);
             }
         });
-        fetchMoreArticlesFromSharedQuery(0, "news");
         adapter.setOnItemClickListener(new ArticlesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
